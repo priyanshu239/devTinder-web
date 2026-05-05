@@ -1,4 +1,4 @@
-import { Navigate, Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import NavBar from "./NavBar";
 import Footer from "./Footer";
 import axios from "axios";
@@ -13,14 +13,14 @@ const Body = () => {
   const userData = useSelector((store) => store.user);
 
   const fetchUser = async () => {
-    if(userData) return;
+    if (userData) return;
     try {
       const user = await axios.get(BASE_URL + "/profile/view", {
         withCredentials: true,
       });
       dispatch(addUser(user.data));
     } catch (err) {
-      if (err.status === 401) {
+      if (err?.response?.status === 401) {
         navigate("/login");
       }
       console.error(err);
@@ -28,12 +28,15 @@ const Body = () => {
   };
 
   useEffect(() => {
-      fetchUser();
+    fetchUser();
   }, []);
+
   return (
-    <div>
+    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
       <NavBar />
-      <Outlet />
+      <main style={{ flex: 1 }}>
+        <Outlet />
+      </main>
       <Footer />
     </div>
   );
